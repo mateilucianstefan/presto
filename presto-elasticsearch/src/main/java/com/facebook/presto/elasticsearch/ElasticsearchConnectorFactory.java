@@ -1,4 +1,3 @@
-
 package com.facebook.presto.elasticsearch;
 
 import com.facebook.presto.spi.Connector;
@@ -50,8 +49,6 @@ public class ElasticsearchConnectorFactory
                     .setRequiredConfigurationProperties(requiredConfig)
                     .setOptionalConfigurationProperties(optionalConfig)
                     .initialize();
-
-
 
             return injector.getInstance(ElasticsearchConnector.class);
         }

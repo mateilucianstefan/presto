@@ -1,13 +1,10 @@
-
 package com.facebook.presto.elasticsearch;
 
 import com.facebook.presto.spi.type.Type;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
@@ -26,12 +23,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
-
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import static com.facebook.presto.spi.type.BigintType.BIGINT;
@@ -41,10 +40,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
-import static io.airlift.json.JsonCodec.listJsonCodec;
 import static java.nio.charset.StandardCharsets.UTF_8;
-
-
 
 public class ElasticsearchClient
 {
@@ -68,10 +64,11 @@ public class ElasticsearchClient
         schemas = Suppliers.memoize(schemasSupplier(catalogCodec, config.getMetadata()));
     }
 
-    private ElasticsearchColumn makeColumn(String fieldPath_Type) throws JSONException, IOException {
-        String[] items = fieldPath_Type.split(":");
+    private ElasticsearchColumn makeColumn(String fieldPathType) throws JSONException, IOException
+    {
+        String[] items = fieldPathType.split(":");
 
-        if(items.length != 2) {
+        if (items.length != 2) {
             /*
             System.out.println("The items are :");
             for (String it : items)
@@ -88,33 +85,44 @@ public class ElasticsearchClient
         Type prestoType = VARCHAR;   // default. It will be corrected below
 
         // take only properties from dimensions and measurements for now
-        if(!(path.startsWith("measurements"))) return null;
+        if (!(path.startsWith("measurements"))) {
+            return null;
+        }
 
-
-        if(path.endsWith(".type"))
-        {
+        if (path.endsWith(".type")) {
             path = path.substring(0, path.lastIndexOf('.'));
 
             // replace '.properties.' with '.'
             path = path.replaceAll("\\.properties\\.", ".");
         }
 
-        if(type.equals("double") || type.equals("float") || type.equals("integer") || type.equals("string"))
-        {
-            if(type.equals("double")) prestoType = DOUBLE;
-            else if(type.equals("float")) prestoType = DOUBLE;
-            else if(type.equals("integer")) prestoType = BIGINT;
-            else if(type.equals("long")) prestoType = BIGINT;
-            else if(type.equals("string")) prestoType = VARCHAR;
+        if (type.equals("double") || type.equals("float") || type.equals("integer") || type.equals("string")) {
+            if (type.equals("double")) {
+                prestoType = DOUBLE;
+            }
+            else if (type.equals("float")) {
+                prestoType = DOUBLE;
+            }
+            else if (type.equals("integer")) {
+                prestoType = BIGINT;
+            }
+            else if (type.equals("long")) {
+                prestoType = BIGINT;
+            }
+            else if (type.equals("string")) {
+                prestoType = VARCHAR;
+            }
         }
-        else return null;
+        else {
+            return null;
+        }
 
-        ElasticsearchColumn column = new ElasticsearchColumn(path.replaceAll("\\.","_"), prestoType, path, type);
+        ElasticsearchColumn column = new ElasticsearchColumn(path.replaceAll("\\.", "_"), prestoType, path, type);
         return column;
     }
 
-    private void getColumns(ElasticsearchTableSource src, Set<ElasticsearchColumn> columns) throws ExecutionException, InterruptedException, IOException, JSONException {
-
+    private void getColumns(ElasticsearchTableSource src, Set<ElasticsearchColumn> columns) throws ExecutionException, InterruptedException, IOException, JSONException
+    {
         /*
         Get the current set of columns for one of the sources of a table
          */
@@ -131,8 +139,6 @@ public class ElasticsearchClient
         System.out.println("index :" + index);
         System.out.println("type :" + type);
 
-
-
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", clusterName)
                 .build();
@@ -143,8 +149,7 @@ public class ElasticsearchClient
 
         GetMappingsResponse res = client.admin().indices().getMappings(new GetMappingsRequest().indices(index).types(type)).get();
 
-
-        ImmutableOpenMap<String, MappingMetaData> mapping  = res.mappings().get(index);
+        ImmutableOpenMap<String, MappingMetaData> mapping = res.mappings().get(index);
         for (ObjectObjectCursor<String, MappingMetaData> c : mapping) {
             //System.out.println(c.key+" = "+c.value.source());
             String data = c.value.source().toString();
@@ -153,9 +158,8 @@ public class ElasticsearchClient
             //System.out.println(json.toString(2));
 
             List<String> leaves = (new MyJSONTest()).getListJson(json);
-            for (String fieldPath_Type : leaves)
-            {
-                ElasticsearchColumn clm = makeColumn(fieldPath_Type);
+            for (String fieldPathType : leaves) {
+                ElasticsearchColumn clm = makeColumn(fieldPathType);
                 if (!(clm == null)) {
                     columns.add(clm);
                 }
@@ -169,28 +173,29 @@ public class ElasticsearchClient
     private List<ElasticsearchColumnMetadata> getColumnsMetadata(List<ElasticsearchColumn> columns)
     {
         List<ElasticsearchColumnMetadata> columnsMetadata = new ArrayList<>();
-        for (ElasticsearchColumn clm : columns)
-        {
+        for (ElasticsearchColumn clm : columns) {
             columnsMetadata.add(new ElasticsearchColumnMetadata(clm));
         }
         return columnsMetadata;
     }
 
-
     private void updateTableColumns_ColumnsMetadata(ElasticsearchTable table)
     {
         Set<ElasticsearchColumn> columns = new HashSet<ElasticsearchColumn>();
-        for(ElasticsearchTableSource src : table.getSources())
-        {
+        for (ElasticsearchTableSource src : table.getSources()) {
             try {
-                getColumns(src,columns);
-            } catch (ExecutionException e) {
+                getColumns(src, columns);
+            }
+            catch (ExecutionException e) {
                 e.printStackTrace();
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
-            } catch (JSONException e) {
+            }
+            catch (JSONException e) {
                 System.out.println("JSONException caught !!!");
                 e.printStackTrace();
                 System.out.println("JSONException caught !!!");
@@ -209,7 +214,6 @@ public class ElasticsearchClient
 
         Map<String, Map<String, ElasticsearchTable>> schemasMap = schemas.get();
         for (Map.Entry<String, Map<String, ElasticsearchTable>> entry : schemasMap.entrySet()) {
-
             Map<String, ElasticsearchTable> tablesMap = entry.getValue();
             for (Map.Entry<String, ElasticsearchTable> tableEntry : tablesMap.entrySet()) {
                 updateTableColumns_ColumnsMetadata(tableEntry.getValue());
@@ -219,8 +223,8 @@ public class ElasticsearchClient
         schemas = Suppliers.memoize(Suppliers.ofInstance(schemasMap));
     }
 
-    public Set<String> getSchemaNames() {
-
+    public Set<String> getSchemaNames()
+    {
         //System.out.println("mark : getSchemaNames()");
         return schemas.get().keySet();
     }
@@ -239,7 +243,8 @@ public class ElasticsearchClient
     {
         try {
             this.updateSchemas();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -254,7 +259,6 @@ public class ElasticsearchClient
 
     private static Supplier<Map<String, Map<String, ElasticsearchTable>>> schemasSupplier(final JsonCodec<Map<String, List<ElasticsearchTable>>> catalogCodec, final URI metadataUri)
     {
-
         return () -> {
             try {
                 //System.out.println("mark : executing method schemasSupplier() :");
@@ -264,7 +268,6 @@ public class ElasticsearchClient
                 throw Throwables.propagate(e);
             }
         };
-
 
     }
 

@@ -1,15 +1,10 @@
-
 package com.facebook.presto.elasticsearch;
 
 import com.facebook.presto.spi.RecordCursor;
 import com.facebook.presto.spi.RecordSet;
 import com.facebook.presto.spi.type.Type;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.ByteSource;
-import com.google.common.io.Resources;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,7 +16,6 @@ public class ElasticsearchRecordSet
     private final List<Type> columnTypes;
     //private final ByteSource byteSource;
     private final ElasticsearchTableSource tableSource;
-
 
     public ElasticsearchRecordSet(ElasticsearchSplit split, List<ElasticsearchColumnHandle> columnHandles)
     {

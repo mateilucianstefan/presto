@@ -8,8 +8,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by sprinklr on 03/07/15.
  */
-public class ElasticsearchTableSource {
-
+public class ElasticsearchTableSource
+{
     private String hostaddress;
     private int port;
     private String clusterName;
@@ -32,27 +32,33 @@ public class ElasticsearchTableSource {
     }
 
     @JsonProperty
-    public String getHostaddress() {
+    public String getHostaddress()
+    {
         return hostaddress;
     }
 
     @JsonProperty
-    public int getPort() {
+    public int getPort()
+    {
         return port;
     }
 
     @JsonProperty
-    public String getClusterName() {
+    public String getClusterName()
+    {
         return clusterName;
     }
 
     @JsonProperty
-    public String getIndex() {
+    public String getIndex()
+    {
         return index;
+
     }
 
     @JsonProperty
-    public String getType() {
+    public String getType()
+    {
         return type;
     }
 }

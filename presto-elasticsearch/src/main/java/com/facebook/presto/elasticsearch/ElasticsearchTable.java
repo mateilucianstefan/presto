@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class ElasticsearchTable
 {
     private final String name;
-
     private List<ElasticsearchColumn> columns;
     private List<ElasticsearchColumnMetadata> columnsMetadata;
     private final List<ElasticsearchTableSource> sources;
@@ -51,7 +49,8 @@ public class ElasticsearchTable
         return columns;
     }
 
-    public void setColumns(List<ElasticsearchColumn> columns) {
+    public void setColumns(List<ElasticsearchColumn> columns)
+    {
         this.columns = columns;
     }
 
@@ -72,7 +71,8 @@ public class ElasticsearchTable
         return new ArrayList<>(columnsMetadata);
     }
 
-    public void setColumnsMetadata(List<ElasticsearchColumnMetadata> columnsMetadata) {
+    public void setColumnsMetadata(List<ElasticsearchColumnMetadata> columnsMetadata)
+    {
         this.columnsMetadata = columnsMetadata;
     }
 }

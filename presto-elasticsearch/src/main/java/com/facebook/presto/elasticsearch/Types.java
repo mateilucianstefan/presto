@@ -18,7 +18,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 final class Types
 {
-    private Types() {}
+    private Types()
+    {
+    }
 
     public static <A, B extends A> B checkType(A value, Class<B> target, String name)
     {

@@ -1,4 +1,3 @@
-
 package com.facebook.presto.elasticsearch;
 
 import java.util.Objects;

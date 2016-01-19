@@ -1,30 +1,28 @@
-
 package com.facebook.presto.elasticsearch;
 
 import com.facebook.presto.spi.RecordCursor;
 import com.facebook.presto.spi.type.Type;
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteSource;
-import com.google.common.io.CountingInputStream;
 import io.airlift.slice.Slice;
 import io.airlift.slice.Slices;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHitField;
 
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static com.facebook.presto.spi.type.BigintType.BIGINT;
 import static com.facebook.presto.spi.type.BooleanType.BOOLEAN;
@@ -32,7 +30,6 @@ import static com.facebook.presto.spi.type.DoubleType.DOUBLE;
 import static com.facebook.presto.spi.type.VarcharType.VARCHAR;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ElasticsearchRecordCursor
         implements RecordCursor
@@ -79,7 +76,6 @@ public class ElasticsearchRecordCursor
                 .addTransportAddress(new InetSocketTransportAddress(
                         tableSource.getHostaddress(), tableSource.getPort()));
 
-
         //String[] fields = new String[] {"user", "dim.age" , "measurements.FACEBOOK_PAGE_CONSUMPTIONS_UNIQUE"};
         ArrayList<String> fieldsNeeded = new ArrayList<String>();
         for (int i = 0; i < columnHandles.size(); i++) {
@@ -95,8 +91,6 @@ public class ElasticsearchRecordCursor
                 .execute()
                 .actionGet();
         lines = Arrays.asList(response.getHits().getHits()).iterator();*/
-
-
 
         lines = getRows_faster(client, tableSource, fieldsNeeded).iterator();
 
@@ -128,7 +122,6 @@ public class ElasticsearchRecordCursor
                 .setSize(20000).execute().actionGet(); //20000 hits per shard will be returned for each scroll
         //Scroll until no hits are returned
         while (true) {
-
             for (SearchHit hit : scrollResp.getHits().getHits()) {
                 //Handle the hit...
                 rows.add(hit);
@@ -178,7 +171,7 @@ public class ElasticsearchRecordCursor
         //fields = LINE_SPLITTER.splitToList(line);
         fields = new ArrayList<String>(Collections.nCopies(columnHandles.size(), "-1"));
 
-        Map<String, SearchHitField> map =  hit.getFields();
+        Map<String, SearchHitField> map = hit.getFields();
         for (Map.Entry<String, SearchHitField> entry : map.entrySet()) {
             String jsonPath = entry.getKey().toString();
             SearchHitField fieldvar = entry.getValue();
@@ -189,14 +182,10 @@ public class ElasticsearchRecordCursor
             String value = String.valueOf(lis.get(0));
 
             fields.set(jsonpathToIndex.get(jsonPath), value);
-
-
             //System.out.println("key, " + path + " value " + lis.get(0) );
         }
 
         totalBytes += fields.size();
-
-
         return true;
     }
 

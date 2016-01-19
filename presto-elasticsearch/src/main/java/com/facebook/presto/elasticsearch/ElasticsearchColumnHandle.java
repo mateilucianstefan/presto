@@ -1,8 +1,7 @@
-
 package com.facebook.presto.elasticsearch;
 
-import com.facebook.presto.spi.ColumnMetadata;
 import com.facebook.presto.spi.ColumnHandle;
+import com.facebook.presto.spi.ColumnMetadata;
 import com.facebook.presto.spi.type.Type;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -61,7 +60,6 @@ public final class ElasticsearchColumnHandle
         return columnType;
     }
 
-
     @JsonProperty
     public String getColumnJsonPath()
     {
@@ -73,7 +71,6 @@ public final class ElasticsearchColumnHandle
     {
         return columnJsonType;
     }
-
 
     @JsonProperty
     public int getOrdinalPosition()

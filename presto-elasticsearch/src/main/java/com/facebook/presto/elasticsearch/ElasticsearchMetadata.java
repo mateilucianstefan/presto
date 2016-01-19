@@ -1,8 +1,7 @@
-
 package com.facebook.presto.elasticsearch;
 
-import com.facebook.presto.spi.ColumnMetadata;
 import com.facebook.presto.spi.ColumnHandle;
+import com.facebook.presto.spi.ColumnMetadata;
 import com.facebook.presto.spi.ConnectorSession;
 import com.facebook.presto.spi.ConnectorTableHandle;
 import com.facebook.presto.spi.ConnectorTableMetadata;
@@ -15,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 import javax.inject.Inject;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -114,7 +112,7 @@ public class ElasticsearchMetadata
         ImmutableMap.Builder<String, ColumnHandle> columnHandles = ImmutableMap.builder();
         int index = 0;
         for (ColumnMetadata column : table.getColumnsMetadata()) {
-            ElasticsearchColumnMetadata esColumn = (ElasticsearchColumnMetadata)column;
+            ElasticsearchColumnMetadata esColumn = (ElasticsearchColumnMetadata) column;
             columnHandles.put(esColumn.getName(), new ElasticsearchColumnHandle(connectorId, column.getName(), column.getType(),
                     esColumn.getJsonPath(), esColumn.getJsonType(), index));
             index++;
