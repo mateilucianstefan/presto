@@ -6,7 +6,8 @@ import com.facebook.presto.spi.type.Type;
 /**
  * Created by sprinklr on 03/07/15.
  */
-public class ElasticsearchColumnMetadata extends ColumnMetadata
+public class ElasticsearchColumnMetadata
+        extends ColumnMetadata
 {
     private final String jsonPath;
     private final String jsonType;
@@ -52,7 +53,6 @@ public class ElasticsearchColumnMetadata extends ColumnMetadata
             return false;
         }
         return jsonType.equals(that.jsonType);
-
     }
 
     @Override

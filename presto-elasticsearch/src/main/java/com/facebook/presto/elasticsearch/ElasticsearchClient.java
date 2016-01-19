@@ -23,14 +23,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.inject.Inject;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 
 import static com.facebook.presto.spi.type.BigintType.BIGINT;
@@ -64,7 +65,8 @@ public class ElasticsearchClient
         schemas = Suppliers.memoize(schemasSupplier(catalogCodec, config.getMetadata()));
     }
 
-    private ElasticsearchColumn makeColumn(String fieldPathType) throws JSONException, IOException
+    private ElasticsearchColumn makeColumn(String fieldPathType)
+            throws JSONException, IOException
     {
         String[] items = fieldPathType.split(":");
 
@@ -121,7 +123,8 @@ public class ElasticsearchClient
         return column;
     }
 
-    private void getColumns(ElasticsearchTableSource src, Set<ElasticsearchColumn> columns) throws ExecutionException, InterruptedException, IOException, JSONException
+    private void getColumns(ElasticsearchTableSource src, Set<ElasticsearchColumn> columns)
+            throws ExecutionException, InterruptedException, IOException, JSONException
     {
         /*
         Get the current set of columns for one of the sources of a table
@@ -207,7 +210,8 @@ public class ElasticsearchClient
         table.setColumnsMetadata(getColumnsMetadata(columnsList));
     }
 
-    private void updateSchemas() throws IOException
+    private void updateSchemas()
+            throws IOException
     {
         // load from the metadata json file
         schemas = Suppliers.memoize(schemasSupplier(catalogCodec, config.getMetadata()));
@@ -268,7 +272,6 @@ public class ElasticsearchClient
                 throw Throwables.propagate(e);
             }
         };
-
     }
 
     private static Map<String, Map<String, ElasticsearchTable>> lookupSchemas(URI metadataUri, JsonCodec<Map<String, List<ElasticsearchTable>>> catalogCodec)

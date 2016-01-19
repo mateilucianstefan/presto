@@ -53,7 +53,6 @@ public class ElasticsearchTableSource
     public String getIndex()
     {
         return index;
-
     }
 
     @JsonProperty

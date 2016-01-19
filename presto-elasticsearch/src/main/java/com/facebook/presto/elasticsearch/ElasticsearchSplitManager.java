@@ -1,26 +1,26 @@
 package com.facebook.presto.elasticsearch;
 
 import com.facebook.presto.spi.ColumnHandle;
-import com.facebook.presto.spi.ConnectorPartitionResult;
-import com.facebook.presto.spi.ConnectorSplitManager;
-import com.facebook.presto.spi.ConnectorTableHandle;
-import com.facebook.presto.spi.TupleDomain;
 import com.facebook.presto.spi.ConnectorPartition;
+import com.facebook.presto.spi.ConnectorPartitionResult;
 import com.facebook.presto.spi.ConnectorSplit;
+import com.facebook.presto.spi.ConnectorSplitManager;
 import com.facebook.presto.spi.ConnectorSplitSource;
+import com.facebook.presto.spi.ConnectorTableHandle;
 import com.facebook.presto.spi.FixedSplitSource;
-
+import com.facebook.presto.spi.TupleDomain;
 import com.google.common.collect.ImmutableList;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static com.facebook.presto.elasticsearch.Types.checkType;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class ElasticsearchSplitManager
         implements ConnectorSplitManager

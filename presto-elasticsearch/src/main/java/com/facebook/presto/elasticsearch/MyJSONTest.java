@@ -22,13 +22,15 @@ public class MyJSONTest
         leaves = new ArrayList<String>();
     }
 
-    public List<String> getListJson(JSONObject json) throws JSONException
+    public List<String> getListJson(JSONObject json)
+            throws JSONException
     {
         listJSONObject("", json);
         return leaves;
     }
 
-    private void listObject(String parent, Object data) throws JSONException
+    private void listObject(String parent, Object data)
+            throws JSONException
     {
         if (data instanceof JSONObject) {
             listJSONObject(parent, (JSONObject) data);
@@ -41,7 +43,8 @@ public class MyJSONTest
         }
     }
 
-    private void listJSONObject(String parent, JSONObject json) throws JSONException
+    private void listJSONObject(String parent, JSONObject json)
+            throws JSONException
     {
         Iterator it = json.keys();
         while (it.hasNext()) {
@@ -52,7 +55,8 @@ public class MyJSONTest
         }
     }
 
-    private void listJSONArray(String parent, JSONArray json) throws JSONException
+    private void listJSONArray(String parent, JSONArray json)
+            throws JSONException
     {
         for (int i = 0; i < json.length(); i++) {
             Object data = json.get(i);
@@ -66,7 +70,8 @@ public class MyJSONTest
         leaves.add(parent + ":" + obj.toString());
     }
 
-    public static void main(String[] args) throws JSONException
+    public static void main(String[] args)
+            throws JSONException
     {
         String data = "{\"store\":{\"book\":[{\"category\":\"reference\",\"author\":\"NigelRees\",\"title\":\"SayingsoftheCentury\",\"price\":8.95},{\"category\":\"fiction\",\"author\":\"HermanMelville\",\"title\":\"MobyDick\",\"isbn\":\"0-553-21311-3\",\"price\":8.99},],\"bicycle\":{\"color\":\"red\",\"price\":19.95}},\"expensive\":10}";
         JSONObject json = new JSONObject(data);

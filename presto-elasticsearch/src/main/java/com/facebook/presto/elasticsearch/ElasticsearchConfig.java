@@ -3,6 +3,7 @@ package com.facebook.presto.elasticsearch;
 import io.airlift.configuration.Config;
 
 import javax.validation.constraints.NotNull;
+
 import java.net.URI;
 
 public class ElasticsearchConfig
