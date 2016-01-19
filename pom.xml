@@ -90,6 +90,7 @@
         <module>presto-server-rpm</module>
         <module>presto-docs</module>
         <module>presto-verifier</module>
+        <module>presto-elasticsearch</module>
     </modules>
 
     <dependencyManagement>
