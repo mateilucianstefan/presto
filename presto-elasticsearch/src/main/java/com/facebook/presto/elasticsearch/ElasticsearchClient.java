@@ -13,6 +13,7 @@
  */
 package com.facebook.presto.elasticsearch;
 
+import com.facebook.presto.elasticsearch.util.JsonParser;
 import com.facebook.presto.spi.type.Type;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -173,7 +174,7 @@ public class ElasticsearchClient
             json = json.getJSONObject(type).getJSONObject("properties");
             //System.out.println(json.toString(2));
 
-            List<String> leaves = (new MyJSONTest()).getListJson(json);
+            List<String> leaves = (new JsonParser()).getListJson(json);
             for (String fieldPathType : leaves) {
                 ElasticsearchColumn clm = makeColumn(fieldPathType);
                 if (!(clm == null)) {

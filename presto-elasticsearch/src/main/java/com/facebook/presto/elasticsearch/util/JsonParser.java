@@ -11,9 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.facebook.presto.elasticsearch;
-
-// http://stackoverflow.com/questions/26183948/output-list-of-all-paths-to-leaf-nodes-in-a-json-document-in-java
+package com.facebook.presto.elasticsearch.util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,17 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class MyJSONTest
+/**
+ * Created by lucianmatei on 19/01/16.
+ */
+public class JsonParser
 {
-    /*
-    leaf is of the form -> path:obj
-     */
-    private ArrayList<String> leaves;
-
-    public MyJSONTest()
-    {
-        leaves = new ArrayList<String>();
-    }
+    private ArrayList<String> leaves = new ArrayList<String>();
 
     public List<String> getListJson(JSONObject json)
             throws JSONException
@@ -79,22 +72,6 @@ public class MyJSONTest
 
     private void listPrimitive(String parent, Object obj)
     {
-        //System.out.println(parent + ":"  + obj);
         leaves.add(parent + ":" + obj.toString());
-    }
-
-    public static void main(String[] args)
-            throws JSONException
-    {
-        String data = "{\"store\":{\"book\":[{\"category\":\"reference\",\"author\":\"NigelRees\",\"title\":\"SayingsoftheCentury\",\"price\":8.95},{\"category\":\"fiction\",\"author\":\"HermanMelville\",\"title\":\"MobyDick\",\"isbn\":\"0-553-21311-3\",\"price\":8.99},],\"bicycle\":{\"color\":\"red\",\"price\":19.95}},\"expensive\":10}";
-        JSONObject json = new JSONObject(data);
-        System.out.println(json.get("store"));
-        //System.out.println(json.toString(2));
-        List<String> leaves = (new MyJSONTest()).getListJson(json);
-
-        for (String s : leaves) {
-            System.out.println(s);
-            System.out.println(".....");
-        }
     }
 }
